@@ -1,4 +1,4 @@
-package gr.uom.thesis.project;
+package gr.uom.thesis.project.dto;
 
 
 import lombok.AllArgsConstructor;
