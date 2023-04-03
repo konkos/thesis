@@ -1,6 +1,6 @@
 package gr.uom.thesis.utils;
 
-import gr.uom.thesis.project.AnalyzedProjectDTO;
+import gr.uom.thesis.project.dto.AnalyzedProjectDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
