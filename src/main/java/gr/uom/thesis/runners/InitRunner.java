@@ -4,7 +4,6 @@ import gr.uom.thesis.coverage.TotalCoverageComparator;
 import gr.uom.thesis.coverage.TotalCoverageComparatorRepository;
 import gr.uom.thesis.project.dto.AnalyzedProjectDTO;
 import gr.uom.thesis.project.entities.AnalyzedProject;
-import gr.uom.thesis.project.entities.AnalyzedProjectFile;
 import gr.uom.thesis.project.repositories.AnalyzedProjectFileRepository;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.utils.AsyncFunctions;
@@ -13,7 +12,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component

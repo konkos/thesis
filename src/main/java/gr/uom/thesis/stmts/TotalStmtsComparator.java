@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "analyzedProject1", "analyzedProject2" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "analyzed_project_1_id", "analyzed_project_2_id" }) })
 public class TotalStmtsComparator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

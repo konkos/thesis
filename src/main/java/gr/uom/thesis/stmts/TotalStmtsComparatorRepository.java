@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface TotalStmtsComparatorRepository extends JpaRepository<TotalStmtsComparator, Long> {
 
 
-    Optional<TotalStmtsComparator> findByProject1OrProject2();
+//    List<TotalStmtsComparator> findByAnalyzedProject1OrAnalyzedProject2();
 }

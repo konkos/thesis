@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequestMapping("/analyze")
 public class AnalyzedProjectController {
@@ -18,7 +20,7 @@ public class AnalyzedProjectController {
     }
 
     @PostMapping("/project")
-    public AnalysisResultDto getComparativeAnalysis(@RequestParam String gitUrl) {
-        return analysisResultService.getComparativeAnalysis(gitUrl);
+    public AnalysisResultDto getComparativeAnalysis(@RequestParam String gitUrl) throws ExecutionException, InterruptedException {
+        return analysisResultService.createComparativeAnalysis(gitUrl);
     }
 }

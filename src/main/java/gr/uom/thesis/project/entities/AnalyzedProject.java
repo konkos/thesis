@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -31,9 +33,9 @@ public class AnalyzedProject {
 
     private int dependenciesCounter;
 
-    @OneToMany(mappedBy = "project")
+/*    @OneToMany(mappedBy = "project")
     @ToString.Exclude
-    private List<AnalyzedProjectFile> files;
+    private List<AnalyzedProjectFile> files;*/
 
     private int totalCoverage;
 
@@ -41,7 +43,9 @@ public class AnalyzedProject {
 
     private int totalStmts;
 
+    @Column(unique = true)
     private String sha;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
