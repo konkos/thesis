@@ -23,17 +23,17 @@ public class AnalyzedProjectFile {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    File firstFile;
+    private File firstFile;
 
-    String name;
+    private String name;
 
-    int stmts;
+    private int stmts;
 
-    int miss;
+    private int miss;
 
-    int coverage;
+    private int coverage;
 
-    @OneToMany
+    @OneToMany(mappedBy = "analyzedProjectFile")
     @ToString.Exclude
     private List<Comment> comments;
 
@@ -46,6 +46,7 @@ public class AnalyzedProjectFile {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @ToString.Exclude
     private AnalyzedProject project;
 
     private String projectName;

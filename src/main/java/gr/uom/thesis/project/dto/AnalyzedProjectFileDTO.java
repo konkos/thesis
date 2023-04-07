@@ -15,15 +15,25 @@ import java.util.Map;
 public class AnalyzedProjectFileDTO {
 
 
-    File firstFile;
-    String name;
-    int stmts;
-    int miss;
-    int coverage;
+    private File firstFile;
+
+    private String name;
+
+    private int stmts;
+
+    private int miss;
+
+    private int coverage;
+
     private List<CommentDTO> comments;
-    Double rating;
-    Double previousRating;
-    Map<String, Double> similarity;
+
+    private Double rating;
+
+    private Double previousRating;
+
+    private Map<String, Double> similarity;
+
     private AnalyzedProjectDTO project;
+
     private String projectName;
 }

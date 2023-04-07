@@ -4,15 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class AnalyzedProject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +42,6 @@ public class AnalyzedProject {
     private int totalStmts;
 
     private String sha;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -18,5 +18,8 @@ public class Comment {
     private Long id;
 
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String comment;
+
+    @ManyToOne
+    private AnalyzedProjectFile analyzedProjectFile;
 }
