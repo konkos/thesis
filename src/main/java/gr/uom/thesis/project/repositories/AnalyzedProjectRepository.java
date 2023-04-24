@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface AnalyzedProjectRepository extends JpaRepository<AnalyzedProject, Long> {
 
     Optional<AnalyzedProject> findByGitUrl(String gitUrl);
+
+    boolean existsBySha(String sha);
 }

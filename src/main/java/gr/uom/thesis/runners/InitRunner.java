@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+//@Component
 @Slf4j
 public class InitRunner implements CommandLineRunner {
 
@@ -41,7 +41,7 @@ public class InitRunner implements CommandLineRunner {
 
         AnalyzedProject analyzedProject = new AnalyzedProject();
         BeanUtils.copyProperties(dto, analyzedProject);
-        log.info(dto.toString());
+//        log.info(dto.toString());
 
         assert dto.getFiles() != null;
 

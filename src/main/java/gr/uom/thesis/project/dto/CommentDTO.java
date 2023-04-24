@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CommentDTO {
 
-    private int id;
-    String comment;
+    private String comment;
 
 }

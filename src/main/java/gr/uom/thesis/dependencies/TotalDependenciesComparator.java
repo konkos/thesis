@@ -1,4 +1,4 @@
-package gr.uom.thesis.miss;
+package gr.uom.thesis.dependencies;
 
 import gr.uom.thesis.project.entities.AnalyzedProject;
 import jakarta.persistence.*;
@@ -11,10 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "analyzed_project_1_id", "analyzed_project_2_id" }) })
-public class TotalMissComparator {
+public class TotalDependenciesComparator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -26,5 +25,6 @@ public class TotalMissComparator {
     @JoinColumn(name = "analyzed_project_2_id")
     private AnalyzedProject analyzedProject2;
 
-    private int totalMissDifference;
+    private int totalDependenciesDifference;
+
 }

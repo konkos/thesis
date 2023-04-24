@@ -29,7 +29,7 @@ public class AnalyzedProject {
     private String directory;
 
     @ElementCollection
-    private ArrayList<String> dependencies;
+    private List<String> dependencies;
 
     private int dependenciesCounter;
 

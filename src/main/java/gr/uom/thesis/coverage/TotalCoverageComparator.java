@@ -10,6 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "analyzed_project_1_id", "analyzed_project_2_id" }) })
 public class TotalCoverageComparator {
     @Id
