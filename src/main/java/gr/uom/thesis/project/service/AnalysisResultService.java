@@ -1,5 +1,7 @@
 package gr.uom.thesis.project.service;
 
+import gr.uom.thesis.comments.TotalCommentsComparator;
+import gr.uom.thesis.comments.TotalCommentsRepository;
 import gr.uom.thesis.coverage.TotalCoverageComparator;
 import gr.uom.thesis.coverage.TotalCoverageComparatorRepository;
 import gr.uom.thesis.dependencies.TotalDependenciesComparator;
@@ -10,8 +12,12 @@ import gr.uom.thesis.project.advice.ItemAlreadyAnalyzedException;
 import gr.uom.thesis.project.advice.ItemNotFoundException;
 import gr.uom.thesis.project.dto.AnalysisResultDto;
 import gr.uom.thesis.project.dto.AnalyzedProjectDTO;
+import gr.uom.thesis.project.dto.AnalyzedProjectFileDTO;
 import gr.uom.thesis.project.dto.Distance;
 import gr.uom.thesis.project.entities.AnalyzedProject;
+import gr.uom.thesis.project.entities.AnalyzedProjectFile;
+import gr.uom.thesis.project.entities.Comment;
+import gr.uom.thesis.project.repositories.AnalyzedProjectFileRepository;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.stmts.TotalStmtsComparator;
 import gr.uom.thesis.stmts.TotalStmtsComparatorRepository;
@@ -21,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +37,15 @@ import java.util.concurrent.ExecutionException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AnalysisResultService {
+    private final AnalyzedProjectFileRepository analyzedProjectFileRepository;
 
     private final TotalCoverageComparatorRepository coverageRepository;
     private final TotalStmtsComparatorRepository stmtsRepository;
     private final TotalMissComparatorRepository missRepository;
     private final TotalDependenciesRepository dependenciesRepository;
+    private final TotalCommentsRepository commentsRepository;
 
     private final AnalyzedProjectRepository projectRepository;
 
@@ -64,12 +74,43 @@ public class AnalysisResultService {
         analyzedProject.setDirectory(projectToBeAnalyzedDTO.getDirectory());
         analyzedProject.setOwner(projectToBeAnalyzedDTO.getOwner());
         analyzedProject.setDependenciesCounter(projectToBeAnalyzedDTO.getDependenciesCounter());
-//        analyzedProject.setFiles(projectToBeAnalyzedDTO.getFiles());
         analyzedProject.setGitUrl(projectToBeAnalyzedDTO.getGitUrl());
         analyzedProject.setSha(projectToBeAnalyzedDTO.getSha());
         analyzedProject.setTotalCoverage(projectToBeAnalyzedDTO.getTotalCoverage());
         analyzedProject.setTotalMiss(projectToBeAnalyzedDTO.getTotalMiss());
         analyzedProject.setTotalStmts(projectToBeAnalyzedDTO.getTotalStmts());
+
+/*
+        List<CommentDTO> commentsDTO = projectToBeAnalyzedDTO.getComments();
+        List<Comment> comments = new ArrayList<>();
+
+        if (commentsDTO != null) {
+            commentsDTO.stream().map(commentDTO -> Comment.builder().comment(commentDTO.getComment()).build())
+                    .forEach(comments::add);
+            analyzedProject.setComments(comments);
+        }
+*/
+
+        List<AnalyzedProjectFileDTO> filesDTO = projectToBeAnalyzedDTO.getFiles();
+        List<AnalyzedProjectFile> files = new ArrayList<>();
+
+        List<AnalyzedProjectFile> listofProjectFiles = filesDTO.stream().map(dto -> AnalyzedProjectFile.builder()
+                        .name(dto.getName())
+                        .stmts(dto.getStmts())
+                        .miss(dto.getMiss())
+                        .coverage(dto.getCoverage())
+                        .rating(dto.getRating())
+                        .previousRating(dto.getPreviousRating())
+                        .similarity(dto.getSimilarity())
+                        .projectName(dto.getProjectName())
+                        .project(analyzedProject)
+                        .comments(dto.getComments().stream()
+                                .map(commentDTO -> Comment.builder().comment(commentDTO.getComment()).build()).toList())
+                        .build())
+                .toList();
+        analyzedProjectFileRepository.saveAll(listofProjectFiles);
+        analyzedProject.setFiles(listofProjectFiles);
+        projectRepository.save(analyzedProject);
 
         return compareMetrics(analyzedProject);
     }
@@ -77,8 +118,6 @@ public class AnalysisResultService {
     private AnalysisResultDto compareMetrics(AnalyzedProject projectToBeAnalyzed) {
         List<AnalyzedProject> analyzedProjectList = projectRepository.findAll(); //TODO add pagination
         List<Distance> distances = new ArrayList<>();
-
-        projectRepository.save(projectToBeAnalyzed);
 
         log.info("analyzedProjectList size " + analyzedProjectList.size());
         if (analyzedProjectList.isEmpty()) {
@@ -106,8 +145,9 @@ public class AnalysisResultService {
         int totalMiss = projectToBeAnalyzed.getTotalMiss();
         int totalCoverage = projectToBeAnalyzed.getTotalCoverage();
         int totalDependencies = projectToBeAnalyzed.getDependenciesCounter();
+        int totalComments = projectToBeAnalyzed.getComments().size();
 
-        int currentStmtsDifference = totalStmts - analyzedProject.getTotalStmts();
+        int currentStmtsDifference = analyzedProject.getTotalStmts() - totalStmts;
         TotalStmtsComparator stmtsComparator = TotalStmtsComparator.builder()
                 .analyzedProject1(analyzedProject)
                 .analyzedProject2(projectToBeAnalyzed)
@@ -115,7 +155,7 @@ public class AnalysisResultService {
                 .build();
         stmtsRepository.save(stmtsComparator);
 
-        int currentMissDifference = totalMiss - analyzedProject.getTotalMiss();
+        int currentMissDifference = analyzedProject.getTotalMiss() - totalMiss;
         TotalMissComparator missComparator = TotalMissComparator.builder()
                 .analyzedProject1(analyzedProject)
                 .analyzedProject2(projectToBeAnalyzed)
@@ -123,7 +163,7 @@ public class AnalysisResultService {
                 .build();
         missRepository.save(missComparator);
 
-        int currentCoverageDifference = totalCoverage - analyzedProject.getTotalCoverage();
+        int currentCoverageDifference = analyzedProject.getTotalCoverage() - totalCoverage;
         TotalCoverageComparator coverageComparator = TotalCoverageComparator.builder()
                 .analyzedProject1(analyzedProject)
                 .analyzedProject2(projectToBeAnalyzed)
@@ -131,7 +171,7 @@ public class AnalysisResultService {
                 .build();
         coverageRepository.save(coverageComparator);
 
-        int currentDependenciesDifference = totalDependencies - analyzedProject.getDependenciesCounter();
+        int currentDependenciesDifference = analyzedProject.getDependenciesCounter() - totalDependencies;
         TotalDependenciesComparator dependenciesComparator = TotalDependenciesComparator.builder()
                 .analyzedProject1(analyzedProject)
                 .analyzedProject2(projectToBeAnalyzed)
@@ -139,11 +179,20 @@ public class AnalysisResultService {
                 .build();
         dependenciesRepository.save(dependenciesComparator);
 
+        int commentsDifference = analyzedProject.getComments().size() - totalComments;
+        TotalCommentsComparator commentsComparator = TotalCommentsComparator.builder()
+                .analyzedProject1(analyzedProject)
+                .analyzedProject2(projectToBeAnalyzed)
+                .totalCommentsDifference(commentsDifference)
+                .build();
+        commentsRepository.save(commentsComparator);
+
         distances.add(Distance.builder()
                 .projectName(analyzedProject.getName())
                 .coverageDifference(coverageComparator.getTotalCoverageDifference())
                 .missDifference(missComparator.getTotalMissDifference())
                 .stmtsDifference(stmtsComparator.getTotalStmtsDifference())
+                .commentsDifference(commentsComparator.getTotalCommentsDifference())
                 .build());
     }
 
@@ -154,7 +203,7 @@ public class AnalysisResultService {
         List<TotalDependenciesComparator> analyzedProjectDependencies = dependenciesRepository.getAnalyzedProject(analyzedProject);
         List<TotalStmtsComparator> analyzedProjectStmts = stmtsRepository.getAnalyzedProject(analyzedProject);
         List<TotalMissComparator> analyzedProjectMiss = missRepository.getAnalyzedProject(analyzedProject);
-        List<TotalDependenciesComparator> analyzedProjectDeps = dependenciesRepository.getAnalyzedProject(analyzedProject);
+        List<TotalCommentsComparator> analyzedProjectComments = commentsRepository.getAnalyzedProject(analyzedProject);
 
         //Map
         List<Distance> distances = new ArrayList<>();
@@ -167,10 +216,28 @@ public class AnalysisResultService {
 
         computeDependencies(analyzedProjectDependencies, distances);
 
+        computeComments(analyzedProjectComments, distances);
+
         return AnalysisResultDto.builder()
                 .projectName(analyzedProject.getName())
                 .distance(distances)
                 .build();
+    }
+
+    private void computeComments(List<TotalCommentsComparator> analyzedProjectComments, List<Distance> distances) {
+        for (TotalCommentsComparator commentsComparator : analyzedProjectComments) {
+            Distance distance = distances.stream()
+                    .filter(d -> d.getProjectName().equals(commentsComparator.getAnalyzedProject1().getName())
+                            || d.getProjectName().equals(commentsComparator.getAnalyzedProject2().getName()))
+                    .findFirst().orElseThrow(() -> new ItemNotFoundException("Not Found"));
+
+            if (commentsComparator.getAnalyzedProject1().getName().equals(distance.getProjectName())) {
+                distance.setCommentsDifference(commentsComparator.getTotalCommentsDifference());
+            } else {
+                distance.setCommentsDifference(commentsComparator.getTotalCommentsDifference() * (-1));
+            }
+
+        }
     }
 
     private static void computeDependencies(List<TotalDependenciesComparator> analyzedProjectDependencies, List<Distance> distances) {

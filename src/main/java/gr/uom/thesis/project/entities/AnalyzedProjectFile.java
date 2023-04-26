@@ -1,10 +1,7 @@
 package gr.uom.thesis.project.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import java.io.File;
@@ -17,6 +14,8 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
 public class AnalyzedProjectFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

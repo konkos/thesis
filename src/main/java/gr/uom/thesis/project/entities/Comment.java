@@ -1,16 +1,15 @@
 package gr.uom.thesis.project.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @ToString
+@Builder
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +21,10 @@ public class Comment {
 
     @ManyToOne
     private AnalyzedProjectFile analyzedProjectFile;
+
+    @ToString.Exclude
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "analyzed_project_id", nullable = false)
+    private AnalyzedProject analyzedProject;
+
 }

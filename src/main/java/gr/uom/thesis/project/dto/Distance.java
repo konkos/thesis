@@ -13,4 +13,5 @@ public class Distance {
     private int stmtsDifference;
     private int missDifference;
     private int dependenciesDifference;
+    private int commentsDifference;
 }

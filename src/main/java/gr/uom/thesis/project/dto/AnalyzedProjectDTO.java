@@ -25,5 +25,6 @@ public class AnalyzedProjectDTO {
     private int totalMiss;
     private int totalStmts;
     private String sha;
+//    private List<CommentDTO> comments;
 
 }

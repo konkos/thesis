@@ -33,9 +33,9 @@ public class AnalyzedProject {
 
     private int dependenciesCounter;
 
-/*    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project")
     @ToString.Exclude
-    private List<AnalyzedProjectFile> files;*/
+    private List<AnalyzedProjectFile> files;
 
     private int totalCoverage;
 
@@ -45,6 +45,9 @@ public class AnalyzedProject {
 
     @Column(unique = true)
     private String sha;
+
+    @OneToMany(mappedBy = "analyzedProject", orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
