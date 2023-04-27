@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  app:
+    image: 'konkos/thesis:latest'
+    build:
+      context: .
+    container_name: thesis_app
+    depends_on:
+      - thesis_db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://thesis_db:5432/service_based_assessment_db
+      - SPRING_DATASOURCE_USERNAME=service_based_assessment_user
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    ports:
+      - '8080:8080'
+  thesis_db:
+    image: postgres
+    container_name: thesis_db
+    environment:
+      POSTGRES_USER: service_based_assessment_user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: service_based_assessment_db
+    ports:
+      - '5436:5432'
