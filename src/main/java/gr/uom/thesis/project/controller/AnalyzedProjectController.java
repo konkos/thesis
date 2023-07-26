@@ -2,7 +2,6 @@ package gr.uom.thesis.project.controller;
 
 import gr.uom.thesis.project.dto.AnalysisResultDto;
 import gr.uom.thesis.project.service.AnalysisResultService;
-import lombok.Getter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.ExecutionException;
@@ -24,7 +23,7 @@ public class AnalyzedProjectController {
     }
 
     @GetMapping("/project")
-    public AnalysisResultDto getAnalyzedProject(@RequestParam String gitUrl){
+    public AnalysisResultDto getAnalyzedProject(@RequestParam String gitUrl) {
         return analysisResultService.getAnalyzedProject(gitUrl);
     }
 }

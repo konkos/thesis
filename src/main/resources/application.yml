@@ -1,15 +1,20 @@
 #spring:
 #  jpa:
+#    generate-ddl: true
 #    show-sql: true
 #    hibernate:
 #      ddl-auto: create-drop
 #  datasource:
-#    url: jdbc:po://localhost:3306/springboot
+#    url: jdbc:postgres://localhost:3306/springboot
 #    username: root
 #    password:
-
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: *
 variables:
   sba:
-#    url: http://195.251.210.147:8282
+    url: http://195.251.210.147:8282
     gitURL: https://github.com/niekwit/pyseqtools
-    url: 127.0.0.1:8081
