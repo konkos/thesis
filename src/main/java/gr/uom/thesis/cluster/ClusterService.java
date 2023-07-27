@@ -33,28 +33,33 @@ public class ClusterService {
 //        this.missRepository = missRepository;
 //    }
 
-    public Map<Centroid, List<Record>> createClusters() {
+    public Map<Centroid, List<Record>> createClusters(int k) {
 
         List<AnalyzedProject> projects = projectRepository.findAll();
         List<Record> records = new ArrayList<>();
 
         for (AnalyzedProject project : projects) {
-            int dependenciesCounter = project.getDependenciesCounter();
-            int totalCoverage = project.getTotalCoverage();
-            int totalMiss = project.getTotalMiss();
-            int totalStmts = project.getTotalStmts();
-
-            Map<String, Double> features = new HashMap<>();
-            features.put("dependenciesCounter", (double) dependenciesCounter);
-            features.put("coverage", (double) totalCoverage);
-            features.put("stmts", (double) totalStmts);
-            features.put("miss", (double) totalMiss);
+            Map<String, Double> features = getFeatures(project);
 
             records.add(new Record(project.getName(), features));
         }
 
         //TODO add elbow method
 
-        return KMeans.fit(records, 5, new EuclideanDistance(), 1000);
+        return KMeans.fit(records, k, new EuclideanDistance(), 1000);
+    }
+
+    private static Map<String, Double> getFeatures(AnalyzedProject project) {
+        int dependenciesCounter = project.getDependenciesCounter();
+        int totalCoverage = project.getTotalCoverage();
+        int totalMiss = project.getTotalMiss();
+        int totalStmts = project.getTotalStmts();
+
+        Map<String, Double> features = new HashMap<>();
+        features.put("dependenciesCounter", (double) dependenciesCounter);
+        features.put("coverage", (double) totalCoverage);
+        features.put("stmts", (double) totalStmts);
+        features.put("miss", (double) totalMiss);
+        return features;
     }
 }

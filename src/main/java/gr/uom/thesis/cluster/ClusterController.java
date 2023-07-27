@@ -15,18 +15,18 @@ public class ClusterController {
 
     private final ClusterService clusterService;
 
-    public ClusterController(AnalyzedProjectRepository analyzedProjectRepository, ClusterService clusterService) {
+    public ClusterController(ClusterService clusterService) {
         this.clusterService = clusterService;
     }
 
     @PostMapping
-    public Map<Centroid, List<Record>> fitData(){
-        return clusterService.createClusters();
+    public Map<Centroid, List<Record>> fitData(@RequestParam(value = "k", defaultValue = "5") int k) {
+        return clusterService.createClusters(k);
     }
 
 
     @GetMapping
-    public List<Double> elbowMethod(@RequestParam(value = "kmax", defaultValue = "16") int kmax){
+    public List<Double> elbowMethod(@RequestParam(value = "kmax", defaultValue = "16") int kmax) {
         return ElbowFinder.sseForEachK(kmax);
     }
 
