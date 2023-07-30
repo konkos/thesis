@@ -17,6 +17,7 @@ public class GlobalRestAdvice {
     @ExceptionHandler(ItemNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ProblemDetail notFoundHandler(ItemNotFoundException e) {
+        e.printStackTrace();
         return ProblemDetail.forStatusAndDetail(HttpStatus.valueOf(HttpStatus.NOT_FOUND.value()),
                 "We couldn't find what you were looking for");
     }

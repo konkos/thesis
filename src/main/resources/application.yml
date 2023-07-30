@@ -1,13 +1,19 @@
-spring:
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
-  datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/springboot
-    username: root
-    password:
-
+#spring:
+#  jpa:
+#    generate-ddl: true
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: create-drop
+#  datasource:
+#    url: jdbc:postgres://localhost:3306/springboot
+#    username: root
+#    password:
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: *
 variables:
   sba:
     url: http://195.251.210.147:8282
