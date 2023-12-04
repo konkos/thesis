@@ -54,12 +54,16 @@ public class ClusterService {
         int totalCoverage = project.getTotalCoverage();
         int totalMiss = project.getTotalMiss();
         int totalStmts = project.getTotalStmts();
+        int commentsSize = project.getComments().size();
+        int size = project.getFiles().size();
 
         Map<String, Double> features = new HashMap<>();
         features.put("dependenciesCounter", (double) dependenciesCounter);
         features.put("coverage", (double) totalCoverage);
         features.put("stmts", (double) totalStmts);
         features.put("miss", (double) totalMiss);
+        features.put("comments", (double) commentsSize);
+        features.put("size", (double) size);
         return features;
     }
 }
