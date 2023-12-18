@@ -1,6 +1,8 @@
 package gr.uom.thesis.utils;
 
+import gr.uom.thesis.project.dto.AnalyzedDescriptionDTO;
 import gr.uom.thesis.project.dto.AnalyzedProjectDTO;
+import gr.uom.thesis.project.dto.TextClassificationRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ public class AsyncFunctions {
     @Value("${variables.sba.url}")
     private String sbaURL;
 
+    @Value("${variables.text_classification.url}")
+    private String textClassificationURL;
+
     private final RestTemplate restTemplate;
 
     public AsyncFunctions(RestTemplate restTemplate) {
@@ -31,6 +36,16 @@ public class AsyncFunctions {
         log.info(uri.toString());
         ResponseEntity<AnalyzedProjectDTO> response = restTemplate.getForEntity(uri, AnalyzedProjectDTO.class);
         return CompletableFuture.completedFuture(response);
+    }
+
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<ResponseEntity<AnalyzedDescriptionDTO>> getProjectCategories(String text) {
+
+        URI uri = URI.create(textClassificationURL);
+        log.info(uri.toString());
+        ResponseEntity<AnalyzedDescriptionDTO> forEntity = restTemplate.postForEntity(uri,
+                new TextClassificationRequestDTO(text), AnalyzedDescriptionDTO.class);
+        return CompletableFuture.completedFuture(forEntity);
     }
 
 }

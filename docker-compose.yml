@@ -35,3 +35,9 @@ services:
       PGADMIN_DEFAULT_PASSWORD: 123456
     ports:
       - '5000:80'
+
+  text_classification:
+    image: 'konkos/text_classification_flask'
+    container_name: text_classification_flask
+    ports:
+      - '6000:5000'
