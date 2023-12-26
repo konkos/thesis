@@ -53,12 +53,12 @@ public class AnalysisResultService {
 
 
     public AnalysisResultDto createComparativeAnalysis(String gitUrl) throws ExecutionException, InterruptedException {
-/*        AnalyzedProject projectToBeAnalyzed = projectRepository.findByGitUrl(gitUrl)
-                .orElseThrow(() -> new ItemNotFoundException("Project With url: " + gitUrl + " Was Not Found"));*/
-        CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> projectByGitUrlFuture =
-                asyncFunctions.getProjectByGitUrl(gitUrl);
+
+        CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> projectByGitUrlFuture = asyncFunctions.getProjectByGitUrl(gitUrl);
+
         ResponseEntity<AnalyzedProjectDTO> analyzedProjectDTOResponseEntity = projectByGitUrlFuture.get();
         log.info(analyzedProjectDTOResponseEntity.toString());
+
         HttpStatusCode statusCode = analyzedProjectDTOResponseEntity.getStatusCode();
         log.info(statusCode.toString());
 
@@ -80,19 +80,7 @@ public class AnalysisResultService {
         analyzedProject.setTotalMiss(projectToBeAnalyzedDTO.getTotalMiss());
         analyzedProject.setTotalStmts(projectToBeAnalyzedDTO.getTotalStmts());
 
-/*
-        List<CommentDTO> commentsDTO = projectToBeAnalyzedDTO.getComments();
-        List<Comment> comments = new ArrayList<>();
-
-        if (commentsDTO != null) {
-            commentsDTO.stream().map(commentDTO -> Comment.builder().comment(commentDTO.getComment()).build())
-                    .forEach(comments::add);
-            analyzedProject.setComments(comments);
-        }
-*/
-
         List<AnalyzedProjectFileDTO> filesDTO = projectToBeAnalyzedDTO.getFiles();
-        List<AnalyzedProjectFile> files = new ArrayList<>();
 
         List<AnalyzedProjectFile> listofProjectFiles = filesDTO.stream().map(dto -> AnalyzedProjectFile.builder()
                         .name(dto.getName())

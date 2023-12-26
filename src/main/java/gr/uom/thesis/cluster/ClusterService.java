@@ -16,22 +16,12 @@ import java.util.Map;
 @Service
 public class ClusterService {
 
-/*    private final TotalCoverageComparatorRepository coverageComparatorRepository;
-    private final TotalStmtsComparatorRepository stmtsRepository;
-    private final TotalDependenciesRepository dependenciesRepository;
-    private final TotalMissComparatorRepository missRepository;*/
-
     private final AnalyzedProjectRepository projectRepository;
 
     public ClusterService(AnalyzedProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
-//    public ClusterService(TotalCoverageComparatorRepository coverageComparatorRepository, TotalStmtsComparatorRepository stmtsRepository, TotalDependenciesRepository dependenciesRepository, TotalMissComparatorRepository missRepository) {
-//        this.coverageComparatorRepository = coverageComparatorRepository;
-//        this.stmtsRepository = stmtsRepository;
-//        this.dependenciesRepository = dependenciesRepository;
-//        this.missRepository = missRepository;
-//    }
+
 
     public Map<Centroid, List<Record>> createClusters(int k) {
 

@@ -49,6 +49,8 @@ public class AnalyzedProject {
     @OneToMany(mappedBy = "analyzedProject", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    private List<String> categories;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

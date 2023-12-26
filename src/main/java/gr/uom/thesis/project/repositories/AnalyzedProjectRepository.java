@@ -9,5 +9,7 @@ public interface AnalyzedProjectRepository extends JpaRepository<AnalyzedProject
 
     Optional<AnalyzedProject> findByGitUrl(String gitUrl);
 
+    Optional<AnalyzedProject> findByName(String name);
+
     boolean existsBySha(String sha);
 }
