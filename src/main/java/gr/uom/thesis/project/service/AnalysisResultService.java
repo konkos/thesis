@@ -104,21 +104,26 @@ public class AnalysisResultService {
     }
 
     private AnalysisResultDto compareMetrics(AnalyzedProject projectToBeAnalyzed) {
-        List<AnalyzedProject> analyzedProjectList = projectRepository.findAll(); //TODO add pagination
+        //TODO add pagination
+        List<AnalyzedProject> analyzedProjectList = projectRepository.findAll();
         List<Distance> distances = new ArrayList<>();
 
         log.info("analyzedProjectList size " + analyzedProjectList.size());
         if (analyzedProjectList.isEmpty()) {
-            pairwiseComparison(projectToBeAnalyzed, projectToBeAnalyzed, distances);
-
-            return AnalysisResultDto.builder()
-                    .projectName(projectToBeAnalyzed.getName())
-                    .distance(distances)
-                    .build();
+            return handleFirstAnalysisItem(projectToBeAnalyzed, distances);
         }
 
         for (AnalyzedProject analyzedProject : analyzedProjectList)
             pairwiseComparison(projectToBeAnalyzed, analyzedProject, distances);
+
+        return AnalysisResultDto.builder()
+                .projectName(projectToBeAnalyzed.getName())
+                .distance(distances)
+                .build();
+    }
+
+    private AnalysisResultDto handleFirstAnalysisItem(AnalyzedProject projectToBeAnalyzed, List<Distance> distances) {
+        pairwiseComparison(projectToBeAnalyzed, projectToBeAnalyzed, distances);
 
         return AnalysisResultDto.builder()
                 .projectName(projectToBeAnalyzed.getName())
