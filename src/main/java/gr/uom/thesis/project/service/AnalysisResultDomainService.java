@@ -3,6 +3,7 @@ package gr.uom.thesis.project.service;
 import gr.uom.thesis.project.advice.ItemNotFoundException;
 import gr.uom.thesis.project.dto.AnalyzedDescriptionDTO;
 import gr.uom.thesis.project.entities.AnalyzedProject;
+import gr.uom.thesis.project.entities.ProjectCategory;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.utils.AsyncFunctions;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class AnalysisResultDomainService {
     private String githubUrl;
 
     @Transactional
-    public List<String> getProjectDomain(String projectName) {
+    public List<ProjectCategory> getProjectDomain(String projectName) {
         AnalyzedProject analyzedProject = projectRepository.findByName(projectName)
                 .orElseThrow(() -> new ItemNotFoundException("Project Not Found"));
 
@@ -38,7 +39,7 @@ public class AnalysisResultDomainService {
         // Fetch categories from text classification api
         AnalyzedDescriptionDTO analyzedDescriptionDTO = getProjectCategories(query);
 
-        List<String> analysisResult = analyzedDescriptionDTO.analysis();
+        List<ProjectCategory> analysisResult = analyzedDescriptionDTO.analysis();
         analyzedProject.setCategories(analysisResult);
         projectRepository.save(analyzedProject);
 
@@ -46,8 +47,7 @@ public class AnalysisResultDomainService {
     }
 
     private AnalyzedDescriptionDTO getProjectCategories(String query) {
-        AnalyzedDescriptionDTO analyzedDescriptionDTO = asyncFunctions
-                .getProjectCategories(query).join().getBody();
+        AnalyzedDescriptionDTO analyzedDescriptionDTO = asyncFunctions.getProjectCategories(query).join().getBody();
         if (analyzedDescriptionDTO == null) throw new ItemNotFoundException("Analysis Not Found");
         return analyzedDescriptionDTO;
     }
@@ -82,6 +82,5 @@ public class AnalysisResultDomainService {
         private String description;
         private String[] topics;
     }
-
 
 }

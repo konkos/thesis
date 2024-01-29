@@ -1,5 +1,6 @@
 package gr.uom.thesis.project.controller;
 
+import gr.uom.thesis.project.entities.ProjectCategory;
 import gr.uom.thesis.project.service.AnalysisResultDomainService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ public class ProjectCategoryController {
     private final AnalysisResultDomainService analysisResultDomainService;
 
     @GetMapping
-    public List<String> getProjectTags(@RequestParam String projectName) {
+    public List<ProjectCategory> getProjectTags(@RequestParam String projectName) {
         return analysisResultDomainService.getProjectDomain(projectName);
     }
 }

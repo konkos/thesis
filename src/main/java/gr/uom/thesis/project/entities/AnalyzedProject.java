@@ -28,6 +28,7 @@ public class AnalyzedProject {
 
     private String directory;
 
+    //FIx element colletion
     @ElementCollection
     private List<String> dependencies;
 
@@ -49,7 +50,8 @@ public class AnalyzedProject {
     @OneToMany(mappedBy = "analyzedProject", orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    private List<String> categories;
+    @ManyToMany
+    private List<ProjectCategory> categories;
 
     @Override
     public boolean equals(Object o) {

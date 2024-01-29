@@ -1,6 +1,5 @@
 package gr.uom.thesis.cluster;
 
-import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.utils.kmeans.Centroid;
 import gr.uom.thesis.utils.kmeans.ElbowFinder;
 import gr.uom.thesis.utils.kmeans.Record;
@@ -20,8 +19,9 @@ public class ClusterController {
     }
 
     @PostMapping
-    public Map<Centroid, List<Record>> fitData(@RequestParam(value = "k", defaultValue = "5") int k) {
-        return clusterService.createClusters(k);
+    public Map<Centroid, List<Record>> fitData(@RequestParam(value = "k", defaultValue = "5") int k,
+                                               @RequestParam(defaultValue = "", required = false) String field) {
+        return clusterService.createClusters(k, field);
     }
 
 
