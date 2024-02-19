@@ -48,9 +48,11 @@ public class AnalyzedProject {
     private String sha;
 
     @OneToMany(mappedBy = "analyzedProject", orphanRemoval = true)
+    @ToString.Exclude
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToMany
+    @ToString.Exclude
     private List<ProjectCategory> categories;
 
     @Override

@@ -19,10 +19,13 @@ import java.util.Map;
 public class ClusterService {
 
     private final AnalyzedProjectRepository projectRepository;
+    private final ProjectCategoryRepository categoryRepository;
+
 
 
     public ClusterService(AnalyzedProjectRepository projectRepository, ProjectCategoryRepository categoryRepository) {
         this.projectRepository = projectRepository;
+        this.categoryRepository = categoryRepository;
     }
 
 
@@ -50,14 +53,13 @@ public class ClusterService {
         return projects;
     }
 
-    private static Map<String, Double> getFeatures(AnalyzedProject project) {
+    private Map<String, Double> getFeatures(AnalyzedProject project) {
         int dependenciesCounter = project.getDependenciesCounter();
         int totalCoverage = project.getTotalCoverage();
         int totalMiss = project.getTotalMiss();
         int totalStmts = project.getTotalStmts();
         int commentsSize = project.getComments().size();
         int numberOfFiles = project.getFiles().size();
-        long categoryIds = project.getCategories().stream().mapToLong(ProjectCategory::getId).sum();
 
         Map<String, Double> features = new HashMap<>();
         features.put("dependenciesCounter", (double) dependenciesCounter);
@@ -66,7 +68,17 @@ public class ClusterService {
         features.put("miss", (double) totalMiss);
         features.put("comments", (double) commentsSize);
         features.put("numberOfFiles", (double) numberOfFiles);
-        features.put("categoryIds", (double) categoryIds);
+        featuresPutCategories(project, features);
+
         return features;
+    }
+
+    private void featuresPutCategories(AnalyzedProject project, Map<String, Double> features) {
+        for (ProjectCategory projectCategory : categoryRepository.findAll()) {
+            if (project.getCategories().contains(projectCategory))
+                features.put(projectCategory.getWord(), 1.0);
+            else
+                features.put(projectCategory.getWord(), 0.0);
+        }
     }
 }

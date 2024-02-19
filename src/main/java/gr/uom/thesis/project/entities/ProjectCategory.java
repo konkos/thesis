@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -29,4 +30,16 @@ public class ProjectCategory {
     @ManyToMany(mappedBy = "categories")
     private List<AnalyzedProject> projects;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProjectCategory that = (ProjectCategory) o;
+        return id == that.id && Objects.equals(entity, that.entity) && Objects.equals(word, that.word) && Objects.equals(projects, that.projects);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(word.toUpperCase());
+    }
 }

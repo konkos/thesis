@@ -14,8 +14,11 @@ public class ClusterController {
 
     private final ClusterService clusterService;
 
-    public ClusterController(ClusterService clusterService) {
+    private final ElbowFinder elbowFinder;
+
+    public ClusterController(ClusterService clusterService, ElbowFinder elbowFinder) {
         this.clusterService = clusterService;
+        this.elbowFinder = elbowFinder;
     }
 
     @PostMapping
@@ -27,7 +30,7 @@ public class ClusterController {
 
     @GetMapping
     public List<Double> elbowMethod(@RequestParam(value = "kmax", defaultValue = "16") int kmax) {
-        return ElbowFinder.sseForEachK(kmax);
+        return elbowFinder.sseForEachK(kmax);
     }
 
 }

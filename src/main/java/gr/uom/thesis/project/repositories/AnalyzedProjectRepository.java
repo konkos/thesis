@@ -15,7 +15,7 @@ public interface AnalyzedProjectRepository extends JpaRepository<AnalyzedProject
 
     boolean existsBySha(String sha);
 
-    List<AnalyzedProject> findByCategory(ProjectCategory category);
+//    List<AnalyzedProject> findByCategory(ProjectCategory category);
 
     List<AnalyzedProject> findByCategories_WordLikeIgnoreCase(String word);
 

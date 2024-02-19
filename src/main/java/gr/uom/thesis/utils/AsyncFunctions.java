@@ -32,7 +32,7 @@ public class AsyncFunctions {
 
     @Async("threadPoolTaskExecutor")
     public CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> getProjectByGitUrl(String gitUrl) {
-        URI uri = URI.create(sbaURL + "/projects/?gitUrl=" + gitUrl);
+        URI uri = URI.create(sbaURL + "/project_analysis?gitUrl=" + gitUrl);
         log.info(uri.toString());
         ResponseEntity<AnalyzedProjectDTO> response = restTemplate.getForEntity(uri, AnalyzedProjectDTO.class);
         return CompletableFuture.completedFuture(response);

@@ -46,9 +46,7 @@ public class AnalysisResultService {
     private final TotalMissComparatorRepository missRepository;
     private final TotalDependenciesRepository dependenciesRepository;
     private final TotalCommentsRepository commentsRepository;
-
     private final AnalyzedProjectRepository projectRepository;
-
     private final AsyncFunctions asyncFunctions;
 
 

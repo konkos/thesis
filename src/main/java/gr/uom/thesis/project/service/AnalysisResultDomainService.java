@@ -6,10 +6,7 @@ import gr.uom.thesis.project.entities.AnalyzedProject;
 import gr.uom.thesis.project.entities.ProjectCategory;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.utils.AsyncFunctions;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AnalysisResultDomainService {
 
     private final RestTemplate restTemplate;

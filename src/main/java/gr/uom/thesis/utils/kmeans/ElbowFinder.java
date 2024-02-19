@@ -1,22 +1,29 @@
 package gr.uom.thesis.utils.kmeans;
 
 import gr.uom.thesis.project.entities.AnalyzedProject;
+import gr.uom.thesis.project.entities.ProjectCategory;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import gr.uom.thesis.project.repositories.ProjectCategoryRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class ElbowFinder {
 
-    @Autowired
-    private static AnalyzedProjectRepository projectRepository;
+    private final AnalyzedProjectRepository projectRepository;
+    private final ProjectCategoryRepository categoryRepository;
+
+    public ElbowFinder(AnalyzedProjectRepository projectRepository, ProjectCategoryRepository categoryRepository) {
+        this.projectRepository = projectRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     //sum of square differences
-    public static double sse(Map<Centroid, List<Record>> clustered, Distance distance) {
+    private double sse(Map<Centroid, List<Record>> clustered, Distance distance) {
         double sum = 0;
         for (Map.Entry<Centroid, List<Record>> entry : clustered.entrySet()) {
             Centroid centroid = entry.getKey();
@@ -29,7 +36,7 @@ public class ElbowFinder {
         return sum;
     }
 
-    public static List<Double> sseForEachK(int kmax) {
+    public List<Double> sseForEachK(int kmax) {
 
         List<AnalyzedProject> projects = projectRepository.findAll();
         List<Record> records = new ArrayList<>();
@@ -49,10 +56,9 @@ public class ElbowFinder {
             sumOfSquaredErrors.add(sse);
         }
         return sumOfSquaredErrors;
-
     }
 
-    private static Map<String, Double> getFeatures(AnalyzedProject project) {
+    private Map<String, Double> getFeatures(AnalyzedProject project) {
         int dependenciesCounter = project.getDependenciesCounter();
         int totalCoverage = project.getTotalCoverage();
         int totalMiss = project.getTotalMiss();
@@ -63,6 +69,18 @@ public class ElbowFinder {
         features.put("coverage", (double) totalCoverage);
         features.put("stmts", (double) totalStmts);
         features.put("miss", (double) totalMiss);
+
+        featuresPutCategories(project, features);
+
         return features;
+    }
+
+    private void featuresPutCategories(AnalyzedProject project, Map<String, Double> features) {
+        for (ProjectCategory projectCategory : categoryRepository.findAll()) {
+            if (project.getCategories().contains(projectCategory))
+                features.put(projectCategory.getWord(), 1.0);
+            else
+                features.put(projectCategory.getWord(), 0.0);
+        }
     }
 }
