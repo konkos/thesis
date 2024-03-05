@@ -10,10 +10,7 @@ import gr.uom.thesis.miss.TotalMissComparator;
 import gr.uom.thesis.miss.TotalMissComparatorRepository;
 import gr.uom.thesis.project.advice.ItemAlreadyAnalyzedException;
 import gr.uom.thesis.project.advice.ItemNotFoundException;
-import gr.uom.thesis.project.dto.AnalysisResultDto;
-import gr.uom.thesis.project.dto.AnalyzedProjectDTO;
-import gr.uom.thesis.project.dto.AnalyzedProjectFileDTO;
-import gr.uom.thesis.project.dto.Distance;
+import gr.uom.thesis.project.dto.*;
 import gr.uom.thesis.project.entities.AnalyzedProject;
 import gr.uom.thesis.project.entities.AnalyzedProjectFile;
 import gr.uom.thesis.project.entities.Comment;
@@ -50,11 +47,20 @@ public class AnalysisResultService {
     private final AsyncFunctions asyncFunctions;
 
 
-    public AnalysisResultDto createComparativeAnalysis(String gitUrl) throws ExecutionException, InterruptedException {
+    public AnalysisResultDto createComparativeAnalysis(String gitUrl, String branch) {
 
-        CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> projectByGitUrlFuture = asyncFunctions.getProjectByGitUrl(gitUrl);
+        if (projectRepository.existsByGitUrl(gitUrl)) return getAnalyzedProject(gitUrl);
 
-        ResponseEntity<AnalyzedProjectDTO> analyzedProjectDTOResponseEntity = projectByGitUrlFuture.get();
+        CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> projectByGitUrlFuture = asyncFunctions.getProjectByGitUrl(gitUrl, branch);
+
+        ResponseEntity<AnalyzedProjectDTO> analyzedProjectDTOResponseEntity;
+
+        try {
+            analyzedProjectDTOResponseEntity = projectByGitUrlFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
         log.info(analyzedProjectDTOResponseEntity.toString());
 
         HttpStatusCode statusCode = analyzedProjectDTOResponseEntity.getStatusCode();
@@ -63,22 +69,25 @@ public class AnalysisResultService {
         AnalyzedProjectDTO projectToBeAnalyzedDTO = analyzedProjectDTOResponseEntity.getBody();
         assert projectToBeAnalyzedDTO != null;
 
-        if (projectRepository.existsBySha(projectToBeAnalyzedDTO.getSha()))
+        SingleAnalyzedProjectDto singleAnalyzedProjectDto = projectToBeAnalyzedDTO.getSingleAnalyzedProjectList().get(0);
+
+        if (projectRepository.existsBySha(singleAnalyzedProjectDto.getSha()))
             throw new ItemAlreadyAnalyzedException(projectToBeAnalyzedDTO.getName());
 
         AnalyzedProject analyzedProject = new AnalyzedProject();
         analyzedProject.setName(projectToBeAnalyzedDTO.getName());
-        analyzedProject.setDependencies(projectToBeAnalyzedDTO.getDependencies());
+
+        analyzedProject.setDependencies(singleAnalyzedProjectDto.getDependencies());
         analyzedProject.setDirectory(projectToBeAnalyzedDTO.getDirectory());
         analyzedProject.setOwner(projectToBeAnalyzedDTO.getOwner());
-        analyzedProject.setDependenciesCounter(projectToBeAnalyzedDTO.getDependenciesCounter());
+        analyzedProject.setDependenciesCounter(singleAnalyzedProjectDto.getDependenciesCounter());
         analyzedProject.setGitUrl(projectToBeAnalyzedDTO.getGitUrl());
-        analyzedProject.setSha(projectToBeAnalyzedDTO.getSha());
-        analyzedProject.setTotalCoverage(projectToBeAnalyzedDTO.getTotalCoverage());
-        analyzedProject.setTotalMiss(projectToBeAnalyzedDTO.getTotalMiss());
-        analyzedProject.setTotalStmts(projectToBeAnalyzedDTO.getTotalStmts());
+        analyzedProject.setSha(singleAnalyzedProjectDto.getSha());
+        analyzedProject.setTotalCoverage(singleAnalyzedProjectDto.getTotalCoverage());
+        analyzedProject.setTotalMiss(singleAnalyzedProjectDto.getTotalMiss());
+        analyzedProject.setTotalStmts(singleAnalyzedProjectDto.getTotalStmts());
 
-        List<AnalyzedProjectFileDTO> filesDTO = projectToBeAnalyzedDTO.getFiles();
+        List<AnalyzedProjectFileDTO> filesDTO = singleAnalyzedProjectDto.getFiles();
 
         List<AnalyzedProjectFile> listofProjectFiles = filesDTO.stream().map(dto -> AnalyzedProjectFile.builder()
                         .name(dto.getName())

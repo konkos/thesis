@@ -18,13 +18,7 @@ public class AnalyzedProjectDTO {
     private String owner;
     private String name;
     private String directory;
-    private ArrayList<String> dependencies;
-    private int dependenciesCounter;
-    private List<AnalyzedProjectFileDTO> files;
-    private int totalCoverage;
-    private int totalMiss;
-    private int totalStmts;
-    private String sha;
-//    private List<CommentDTO> comments;
+    private List<SingleAnalyzedProjectDto> singleAnalyzedProjectList;
+
 
 }

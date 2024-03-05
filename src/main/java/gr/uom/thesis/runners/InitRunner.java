@@ -1,18 +1,11 @@
 package gr.uom.thesis.runners;
 
-import gr.uom.thesis.coverage.TotalCoverageComparator;
 import gr.uom.thesis.coverage.TotalCoverageComparatorRepository;
-import gr.uom.thesis.project.dto.AnalyzedProjectDTO;
-import gr.uom.thesis.project.entities.AnalyzedProject;
 import gr.uom.thesis.project.repositories.AnalyzedProjectFileRepository;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.utils.AsyncFunctions;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 //@Component
 @Slf4j
@@ -35,7 +28,7 @@ public class InitRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        AnalyzedProjectDTO dto = asyncFunctions
+        /*AnalyzedProjectDTO dto = asyncFunctions
                 .getProjectByGitUrl("https://github.com/niekwit/pyseqtools").get().getBody();
         assert dto != null;
 
@@ -59,16 +52,14 @@ public class InitRunner implements CommandLineRunner {
                     .totalCoverageDifference(totalCoverageDifference)
                     .build();
 
-            coverageComparatorRepository.save(comparator);
-
-        }
-
-        /*
-         * For each analyzed project add to Total*ComparatorRepository
-         * Λειτουργεί σαν "πίνακας γειτνίασης"
-         * */
-
+            coverageComparatorRepository.save(comparator);*/
 
     }
+
+    /*
+     * For each analyzed project add to Total*ComparatorRepository
+     * Λειτουργεί σαν "πίνακας γειτνίασης"
+     * */
+
 
 }

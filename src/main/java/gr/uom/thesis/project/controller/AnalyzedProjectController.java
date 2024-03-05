@@ -2,9 +2,10 @@ package gr.uom.thesis.project.controller;
 
 import gr.uom.thesis.project.dto.AnalysisResultDto;
 import gr.uom.thesis.project.service.AnalysisResultService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.concurrent.ExecutionException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -17,13 +18,13 @@ public class AnalyzedProjectController {
         this.analysisResultService = analysisResultService;
     }
 
-    @PostMapping("/project")
-    public AnalysisResultDto getComparativeAnalysis(@RequestParam String gitUrl) throws ExecutionException, InterruptedException {
-        return analysisResultService.createComparativeAnalysis(gitUrl);
+    @GetMapping("/project")
+    public AnalysisResultDto getComparativeAnalysis(@RequestParam String gitUrl, @RequestParam String branch) {
+        return analysisResultService.createComparativeAnalysis(gitUrl, branch);
     }
 
-    @GetMapping("/project")
+/*    @GetMapping("/project")
     public AnalysisResultDto getAnalyzedProject(@RequestParam String gitUrl) {
         return analysisResultService.getAnalyzedProject(gitUrl);
-    }
+    }*/
 }

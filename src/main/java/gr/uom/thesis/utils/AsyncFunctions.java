@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -31,10 +32,11 @@ public class AsyncFunctions {
     }
 
     @Async("threadPoolTaskExecutor")
-    public CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> getProjectByGitUrl(String gitUrl) {
-        URI uri = URI.create(sbaURL + "/project_analysis?gitUrl=" + gitUrl);
-        log.info(uri.toString());
-        ResponseEntity<AnalyzedProjectDTO> response = restTemplate.getForEntity(uri, AnalyzedProjectDTO.class);
+    public CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> getProjectByGitUrl(String gitUrl, String branch) {
+        log.info("sba URL: {}", sbaURL);
+        URI uri = URI.create(sbaURL + "/project_analysis?gitUrl=" + gitUrl + "&branch=" + branch);
+        log.info("URI: {}", uri);
+        ResponseEntity<AnalyzedProjectDTO> response = restTemplate.postForEntity(uri, HttpResponse.BodyHandlers.ofString(), AnalyzedProjectDTO.class);
         return CompletableFuture.completedFuture(response);
     }
 

@@ -22,7 +22,6 @@ public class ClusterService {
     private final ProjectCategoryRepository categoryRepository;
 
 
-
     public ClusterService(AnalyzedProjectRepository projectRepository, ProjectCategoryRepository categoryRepository) {
         this.projectRepository = projectRepository;
         this.categoryRepository = categoryRepository;

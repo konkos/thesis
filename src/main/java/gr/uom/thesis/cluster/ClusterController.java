@@ -5,6 +5,7 @@ import gr.uom.thesis.utils.kmeans.ElbowFinder;
 import gr.uom.thesis.utils.kmeans.Record;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +22,30 @@ public class ClusterController {
         this.elbowFinder = elbowFinder;
     }
 
-    @PostMapping
+/*
+
+Old API
+
+ @PostMapping
     public Map<Centroid, List<Record>> fitData(@RequestParam(value = "k", defaultValue = "5") int k,
                                                @RequestParam(defaultValue = "", required = false) String field) {
-        return clusterService.createClusters(k, field);
+        return lusterService.createClusters(k, field);
+    }*/
+
+    /*
+    * Replace old Api to Return List<List>. Alternatively change Centroid.toString to change output
+    * */
+    @PostMapping
+    public List<List<Record>> fitData(@RequestParam(value = "k", defaultValue = "5") int k,
+                                      @RequestParam(defaultValue = "", required = false) String field) {
+        Map<Centroid, List<Record>> clusters = clusterService.createClusters(k, field);
+
+        List<List<Record>> result = new ArrayList<>();
+        for (Map.Entry<Centroid, List<Record>> centroid : clusters.entrySet()) {
+            Centroid key = centroid.getKey();
+            result.add(centroid.getValue());
+        }
+        return result;
     }
 
 

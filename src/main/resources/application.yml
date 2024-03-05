@@ -1,6 +1,6 @@
 variables:
   sba:
-    url: http://195.251.210.147:8585
+    url: http://172.23.0.3:8080
     gitURL: https://github.com/niekwit/pyseqtools
     gitURL2: https://github.com/donnemartin/system-design-primer
   text_classification:
