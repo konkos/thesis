@@ -22,9 +22,9 @@ export default function CompareProjectsPanel() {
         if (!githubLink || !branchName) return
 
         console.log(`sending request about ${githubLink}, branch ${branchName}`);
-        const data = await fetch(`${SERVER_BASE_URL}/analyze/project?gitUrl=${githubLink}&branch=${branchName}`)
+        const data = await (await fetch(`${SERVER_BASE_URL}/analyze/project?gitUrl=${githubLink}&branch=${branchName}`)).json()
         console.log(`data.status ${data.status}`);
-        setCompData(data.json())
+        setCompData(data)
     }
 
     const handleInputChange = (event) => {

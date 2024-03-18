@@ -1,4 +1,4 @@
-package gr.uom.thesis.project.service;
+package gr.uom.thesis.runners;
 
 import gr.uom.thesis.comments.TotalCommentsComparator;
 import gr.uom.thesis.comments.TotalCommentsRepository;
@@ -8,108 +8,41 @@ import gr.uom.thesis.dependencies.TotalDependenciesComparator;
 import gr.uom.thesis.dependencies.TotalDependenciesRepository;
 import gr.uom.thesis.miss.TotalMissComparator;
 import gr.uom.thesis.miss.TotalMissComparatorRepository;
-import gr.uom.thesis.project.advice.ItemAlreadyAnalyzedException;
 import gr.uom.thesis.project.advice.ItemNotFoundException;
-import gr.uom.thesis.project.dto.*;
+import gr.uom.thesis.project.dto.AnalysisResultDto;
+import gr.uom.thesis.project.dto.Distance;
 import gr.uom.thesis.project.entities.AnalyzedProject;
-import gr.uom.thesis.project.entities.AnalyzedProjectFile;
-import gr.uom.thesis.project.entities.Comment;
-import gr.uom.thesis.project.repositories.AnalyzedProjectFileRepository;
 import gr.uom.thesis.project.repositories.AnalyzedProjectRepository;
 import gr.uom.thesis.stmts.TotalStmtsComparator;
 import gr.uom.thesis.stmts.TotalStmtsComparatorRepository;
-import gr.uom.thesis.utils.AsyncFunctions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-@Service
+@Component
 @RequiredArgsConstructor
+@Order(2)
 @Slf4j
 @Transactional
-public class AnalysisResultService {
-    private final AnalyzedProjectFileRepository analyzedProjectFileRepository;
-
+public class Runner2 implements CommandLineRunner {
+    private final AnalyzedProjectRepository projectRepository;
     private final TotalCoverageComparatorRepository coverageRepository;
     private final TotalStmtsComparatorRepository stmtsRepository;
     private final TotalMissComparatorRepository missRepository;
     private final TotalDependenciesRepository dependenciesRepository;
     private final TotalCommentsRepository commentsRepository;
-    private final AnalyzedProjectRepository projectRepository;
-    private final AsyncFunctions asyncFunctions;
 
-
-    public AnalysisResultDto createComparativeAnalysis(String gitUrl, String branch) {
-
-        if (projectRepository.existsByGitUrl(gitUrl)) return getAnalyzedProject(gitUrl);
-
-        CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> projectByGitUrlFuture = asyncFunctions.getProjectByGitUrl(gitUrl, branch);
-
-        ResponseEntity<AnalyzedProjectDTO> analyzedProjectDTOResponseEntity;
-
-        try {
-            analyzedProjectDTOResponseEntity = projectByGitUrlFuture.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-
-        log.info(analyzedProjectDTOResponseEntity.toString());
-
-        HttpStatusCode statusCode = analyzedProjectDTOResponseEntity.getStatusCode();
-        log.info(statusCode.toString());
-
-        AnalyzedProjectDTO projectToBeAnalyzedDTO = analyzedProjectDTOResponseEntity.getBody();
-        assert projectToBeAnalyzedDTO != null;
-
-
-
-//        projectToBeAnalyzedDTO projectToBeAnalyzedDTO = projectToBeAnalyzedDTO.getSingleAnalyzedProjectList().get(0);
-
-        if (projectRepository.existsBySha(projectToBeAnalyzedDTO.getSha()))
-            throw new ItemAlreadyAnalyzedException(projectToBeAnalyzedDTO.getName());
-
-        AnalyzedProject analyzedProject = new AnalyzedProject();
-        analyzedProject.setName(projectToBeAnalyzedDTO.getName());
-
-        analyzedProject.setDependencies(projectToBeAnalyzedDTO.getDependencies());
-        analyzedProject.setDirectory(projectToBeAnalyzedDTO.getDirectory());
-        analyzedProject.setOwner(projectToBeAnalyzedDTO.getOwner());
-        analyzedProject.setDependenciesCounter(projectToBeAnalyzedDTO.getDependenciesCounter());
-        analyzedProject.setGitUrl(projectToBeAnalyzedDTO.getGitUrl());
-        analyzedProject.setSha(projectToBeAnalyzedDTO.getSha());
-        analyzedProject.setTotalCoverage(projectToBeAnalyzedDTO.getTotalCoverage());
-        analyzedProject.setTotalMiss(projectToBeAnalyzedDTO.getTotalMiss());
-        analyzedProject.setTotalStmts(projectToBeAnalyzedDTO.getTotalStmts());
-
-        List<AnalyzedProjectFileDTO> filesDTO = projectToBeAnalyzedDTO.getFiles();
-
-        List<AnalyzedProjectFile> listofProjectFiles = filesDTO.stream().map(dto -> AnalyzedProjectFile.builder()
-                        .name(dto.getName())
-                        .stmts(dto.getStmts())
-                        .miss(dto.getMiss())
-                        .coverage(dto.getCoverage())
-                        .rating(dto.getRating())
-                        .previousRating(dto.getPreviousRating())
-                        .similarity(dto.getSimilarity())
-                        .projectName(dto.getProjectName())
-                        .project(analyzedProject)
-                        .comments(dto.getComments().stream()
-                                .map(commentDTO -> Comment.builder().comment(commentDTO.getComment()).build()).toList())
-                        .build())
-                .toList();
-        analyzedProjectFileRepository.saveAll(listofProjectFiles);
-        analyzedProject.setFiles(listofProjectFiles);
-        projectRepository.save(analyzedProject);
-
-        return compareMetrics(analyzedProject);
+    @Override
+    public void run(String... args) throws Exception {
+        List<AnalyzedProject> projects = projectRepository.findAll();
+        projects.forEach(this::compareMetrics);
     }
 
     private AnalysisResultDto compareMetrics(AnalyzedProject projectToBeAnalyzed) {

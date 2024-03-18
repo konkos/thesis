@@ -1,8 +1,14 @@
 variables:
+  isExternalServiceAvailable: false
   sba:
-    url: http://172.23.0.3:8080
-    gitURL: https://github.com/niekwit/pyseqtools
-    gitURL2: https://github.com/donnemartin/system-design-primer
+    #    url: http://172.23.0.3:8080
+    url: http://localhost:8080
+    test_repo1:
+      url: https://github.com/niekwit/pyseqtools
+      branch: main
+    test_repo2:
+      url: https://github.com/donnemartin/system-design-primer
+      branch: master
   text_classification:
     url: http://192.168.1.11:5000/
   github_api:
@@ -14,7 +20,7 @@ spring:
     username: service_based_assessment_user
     password: 123456
   jpa:
-    show-sql: true
+#    show-sql: true
     properties:
       hibernate:
         format_sql: true

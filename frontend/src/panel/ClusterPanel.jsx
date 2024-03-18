@@ -1,13 +1,13 @@
-import { Button, Divider, Flex, Input, List, ListItem, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Table, Tbody, Text, Thead, VStack } from '@chakra-ui/react'
+import { Button, Divider, Flex, Input, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Text } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { SERVER_BASE_URL } from '../server_constants'
-import data from '../testClusterData'
+import Cluster from '../components/Cluster'
 
 
 export default function ClusterPanel() {
 
     const [category, setCategory] = useState("")
-    const [clusterSize, setClusterSize] = useState(0)
+    const [clusterSize, setClusterSize] = useState(1)
     const [clusterData, setClusterData] = useState([])
 
     useEffect(() => {
@@ -16,10 +16,6 @@ export default function ClusterPanel() {
         // console.log(`Cluster Data [0]`, clusterData[0]);
         console.log(`Cluster Size ${clusterSize}`);
     }, [clusterData, clusterSize])
-
-    useEffect(() => {
-        setClusterData(data)
-    }, [])
 
 
     const handleInputChange = (event) => {
@@ -60,22 +56,9 @@ export default function ClusterPanel() {
             {
 
                 clusterData && clusterData.map(
-                    (cluster, index) => (
-                        <Table>
-                            <Thead>
-                                <Text fontWeight={'bold'}>Cluster {index}</Text>
-
-                            </Thead>
-
-                            <Tbody>
-                                <List>
-                                    {cluster.map(clusterItem =>
-                                        <ListItem padding={'10px'} >{clusterItem.description}</ListItem >
-                                    )}
-                                </List >
-                            </Tbody>
-
-                        </Table>
+                    (cluster, index) => (<>
+                        <Cluster cluster={cluster} index={index} />
+                    </>
                     ))
             }
         </Flex>

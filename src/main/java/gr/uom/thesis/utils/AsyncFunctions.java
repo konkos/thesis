@@ -25,6 +25,9 @@ public class AsyncFunctions {
     @Value("${variables.text_classification.url}")
     private String textClassificationURL;
 
+    @Value("${variables.isExternalServiceAvailable}")
+    private boolean isExternalServiceAvailable;
+
     private final RestTemplate restTemplate;
 
     public AsyncFunctions(RestTemplate restTemplate) {
@@ -33,6 +36,7 @@ public class AsyncFunctions {
 
     @Async("threadPoolTaskExecutor")
     public CompletableFuture<ResponseEntity<AnalyzedProjectDTO>> getProjectByGitUrl(String gitUrl, String branch) {
+
         log.info("sba URL: {}", sbaURL);
         URI uri = URI.create(sbaURL + "/project_analysis?gitUrl=" + gitUrl + "&branch=" + branch);
         log.info("URI: {}", uri);

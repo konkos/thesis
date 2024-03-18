@@ -33,16 +33,16 @@ Old API
     }*/
 
     /*
-    * Replace old Api to Return List<List>. Alternatively change Centroid.toString to change output
-    * */
+     * Replace old Api to Return List<List>. Alternatively change Centroid.toString to change output
+     * */
     @PostMapping
     public List<List<Record>> fitData(@RequestParam(value = "k", defaultValue = "5") int k,
                                       @RequestParam(defaultValue = "", required = false) String field) {
         Map<Centroid, List<Record>> clusters = clusterService.createClusters(k, field);
 
         List<List<Record>> result = new ArrayList<>();
+//        List<List<Record>> list = clusters.entrySet().stream().map(c -> c.getValue()).toList();
         for (Map.Entry<Centroid, List<Record>> centroid : clusters.entrySet()) {
-            Centroid key = centroid.getKey();
             result.add(centroid.getValue());
         }
         return result;

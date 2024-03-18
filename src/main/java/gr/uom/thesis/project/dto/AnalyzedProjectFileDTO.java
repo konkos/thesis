@@ -15,7 +15,7 @@ import java.util.Map;
 public class AnalyzedProjectFileDTO {
 
 
-    private File firstFile;
+    private String firstFile;
 
     private String name;
 
